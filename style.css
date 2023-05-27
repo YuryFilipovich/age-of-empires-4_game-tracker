@@ -20,16 +20,15 @@ body {
 .team-list {
   background-color: #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 ul.team-list {
   list-style: none;
   padding: 0;
-  border-radius: 10px;
 }
 
 ul.team-list li {
-  list-style: none;
   padding: 10px;
   border-bottom: 1px solid #eee;
   color: #555;
@@ -120,7 +119,7 @@ ul.team-list li:hover {
   border-radius: 6px;
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 0px 0px 10px 0px;
+  margin-bottom: 10px;
   height: 77px;
   transition: box-shadow 0.3s ease;
   width: 100%;
@@ -135,7 +134,6 @@ ul.team-list li:hover {
 .map-info h3 {
   color: #333;
   font-size: 18px;
-  /* margin: 0; */
 }
 
 .map-info h3:first-child {
@@ -147,7 +145,6 @@ ul.team-list li:hover {
   font-size: 16px;
   color: #888;
 }
-
 
 .red {
   color: #e74c3c;
@@ -187,37 +184,15 @@ ul.team-list li:hover {
   color: #00bfff;
 }
 
-/* Style the player rating */
-.player-rating {
-  color: #333;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* Style the player rank */
-.player-rank {
-  color: #333;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* Style the player games */
-.player-games {
-  color: #333;
-  font-size: 20px;
-}
-
-/* Style the player streak */
-.player-streak {
-  color: #333;
-  font-size: 20px;
-}
-
-/* Style the player civilization */
+/* Style the player rating, rank, games, streak, civilization */
+.player-rating,
+.player-rank,
+.player-games,
+.player-streak,
 .player-civilization {
   color: #333;
   font-size: 20px;
+  font-weight: bold;
 }
 
 /* Style the player pick rate */
@@ -244,7 +219,6 @@ ul.team-list li:hover {
 }
 
 /* Style the civilization list */
-
 ol li {
   color: #333;
   font-size: 15px;
@@ -267,7 +241,7 @@ ol li:hover {
 
 #update-popup {
   position: fixed;
-  margin: 0px auto;
+  margin: 0 auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -307,7 +281,7 @@ ol li:hover {
   border: none;
   border-radius: 5px;
   cursor: default;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s
 }
 
 #update-popup button:hover {
@@ -380,6 +354,118 @@ ol li:hover {
   margin: 10px 15px;
   border-radius: 10px;
 }
+
+/* Global Styles */
+
+/* ... (existing styles) ... */
+
+/* Styles for screens up to 768px */
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 10px;
+  }
+
+  .team-list li {
+    padding: 10px;
+  }
+
+  .nickname-container {
+    margin-right: 0;
+  }
+
+  .player-box {
+    padding: 10px 20px;
+    height: auto;
+  }
+
+  .game-info {
+    margin-bottom: 10px;
+  }
+
+  .game-info h3 {
+    font-size: 18px;
+  }
+
+  .game-info p {
+    font-size: 14px;
+  }
+
+  .player-name {
+    font-size: 18px;
+  }
+
+  .player-rating,
+  .player-rank,
+  .player-games,
+  .player-streak,
+  .player-civilization,
+  .player-pick-rate,
+  .player-win-rate {
+    font-size: 14px;
+  }
+
+  ol li {
+    font-size: 12px;
+    margin: 3px;
+    padding: 3px 8px;
+  }
+
+  .no-games {
+    font-size: 16px;
+  }
+}
+
+/* Styles for screens up to 480px */
+@media screen and (max-width: 480px) {
+  .container {
+    margin: 5px;
+  }
+
+  .player-box {
+    padding: 10px;
+  }
+
+  .player-name {
+    font-size: 16px;
+  }
+
+  .player-rating,
+  .player-rank,
+  .player-games,
+  .player-streak,
+  .player-civilization,
+  .player-pick-rate,
+  .player-win-rate {
+    font-size: 12px;
+  }
+
+  .game-info h3 {
+    font-size: 16px;
+  }
+
+  .game-info p {
+    font-size: 12px;
+  }
+
+  ol li {
+    font-size: 10px;
+    margin: 2px;
+    padding: 2px 6px;
+  }
+
+  .no-games {
+    font-size: 14px;
+  }
+}
+
+/* Version info styles for screens up to 480px */
+@media screen and (max-width: 480px) {
+  .version-info {
+    font-size: 12px;
+    margin: 5px;
+  }
+}
+
 
 @media only screen and (max-width: 600px) {
   #update-popup {

@@ -41,8 +41,7 @@ const url = 'https://aoe4world.com';
 // nickname: Samui_Sanchez (but can be any nickname You want)
 // { id: '14711962-Samui_Sanchez', nickname: 'Samui_Sanchez' },
 const teamToTrack = [
-  { id: '123456789-abc', nickname: 'abc' },
-  { id: '123456789-abc', nickname: 'abc' },
+  { id: '12345678910-abc', nickname: 'abc' },
 ].sort((a, b) => a.nickname.localeCompare(b.nickname));
 
 /**
@@ -53,17 +52,17 @@ const teamToTrack = [
 const logPlayerGames = async (playerId) => {
   try {
     const response = await fetch(`${url}/api/v0/players/${playerId}/games`);
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
     const data = await response.json();
     const games = data.games;
 
-    if (games.length > 0) {
-      const playingNow = games[0].ongoing || games[0].just_finished;
-      return playingNow;
-    } else {
-      return false;
-    }
+    return games.length > 0 && (games[0].ongoing || games[0].just_finished);
   } catch (error) {
-    console.error(error);
+    console.error("An error occurred while retrieving player games:", error.message);
     return false;
   }
 };
@@ -73,38 +72,37 @@ const logPlayerGames = async (playerId) => {
  * @returns {Promise<void>}
  */
 const updatePlayingStatus = async () => {
-  for (const member of teamToTrack) {
+  const playingStatusPromises = teamToTrack.map(async (member) => {
     const playingNow = await logPlayerGames(member.id);
-    /* Find the li element for the member */
     const memberLi = document.querySelector(`li[data-member-id="${member.id}"]`);
 
     memberLi.classList.toggle('playing', playingNow);
-    memberLi.querySelector('.playing-badge').classList.toggle('playing', playingNow);
-    memberLi.querySelector('.playing-badge').classList.toggle('not-playing', !playingNow);
-    memberLi.querySelector('.playing-badge').textContent = playingNow ? '' : ' ';
-  }
+    const playingBadge = memberLi.querySelector('.playing-badge');
+    playingBadge.classList.toggle('playing', playingNow);
+    playingBadge.classList.toggle('not-playing', !playingNow);
+    playingBadge.textContent = playingNow ? '' : ' ';
+  });
+
+  await Promise.all(playingStatusPromises);
 };
+
 
 /**
  * Generates an HTML list of team members' names with associated links and placeholders for their playing status.
  * @type {string}
  */
-const namesList = teamToTrack
-  .map(
-    (member) =>
-      `<li class='dis-friends' data-member-id="${member.id}">
-      <span class="nickname-container">
-        <span class="nickname">Nickname:
-          <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
-        </span>
-        <span class="playing-badge">Loading...</span>
-      </span><br>
-    </li>
-    `
-  )
-  .join('');
+const namesList = teamToTrack.map((member) => `
+  <li class='dis-friends' data-member-id="${member.id}">
+    <span class="nickname-container">
+      <span class="nickname">Nickname:
+        <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
+      </span>
+      <span class="playing-badge">Loading...</span>
+    </span><br>
+  </li>
+`).join('');
 
-teamList.innerHTML = `${namesList}`;
+teamList.innerHTML = namesList;
 
 /* Update the playing status */
 updatePlayingStatus();
@@ -120,31 +118,29 @@ const getPlayerGameInfo = async (playerId) => {
     const dispatchData = await response.json();
 
     const games = dispatchData.games;
-    if (games.length > 0) {
-      const [ongoingGame, justFinishedGame] = games.filter(game => game.ongoing || game.just_finished);
+    const ongoingOrJustFinishedGames = games.filter(game => game.ongoing || game.just_finished);
 
-      if (ongoingGame || justFinishedGame) {
+    if (ongoingOrJustFinishedGames.length > 0) {
+      const gameInfo = {
+        playerId,
+        team1: ongoingOrJustFinishedGames[0].teams[0],
+        team2: ongoingOrJustFinishedGames[0].teams[1],
+        map: ongoingOrJustFinishedGames[0].map,
+        started_at: ongoingOrJustFinishedGames[0].started_at
+      };
+      return gameInfo;
+    } else if (games.length > 1) {
+      const secondGameOngoingOrJustFinished = games.slice(1).find(game => game.ongoing || game.just_finished);
+
+      if (secondGameOngoingOrJustFinished) {
         const gameInfo = {
           playerId,
-          team1: ongoingGame.teams[0],
-          team2: ongoingGame.teams[1],
-          map: ongoingGame.map,
-          started_at: ongoingGame.started_at
+          team1: secondGameOngoingOrJustFinished.teams[0],
+          team2: secondGameOngoingOrJustFinished.teams[1],
+          map: secondGameOngoingOrJustFinished.map,
+          started_at: secondGameOngoingOrJustFinished.started_at
         };
         return gameInfo;
-      } else if (games.length > 1) {
-        const [secondGameOngoing, secondGameJustFinished] = games.slice(1).filter(game => game.ongoing || game.just_finished);
-
-        if (secondGameOngoing || secondGameJustFinished) {
-          const gameInfo = {
-            playerId,
-            team1: secondGameOngoing.teams[0],
-            team2: secondGameOngoing.teams[1],
-            map: secondGameOngoing.map,
-            started_at: secondGameOngoing.started_at
-          };
-          return gameInfo;
-        }
       }
     }
     return null;
@@ -160,25 +156,25 @@ const getPlayerGameInfo = async (playerId) => {
  * @returns {string} The formatted time elapsed in the format "Xd Xh Xm Xs", where X represents the number of days, hours, minutes, and seconds respectively.
 */
 const getTimeSinceStarted = (startedAt) => {
-  const startedTime = new Date(startedAt).getTime();
-  const currentTime = Date.now();
-  const timeDiff = currentTime - startedTime;
+  const timeDiff = Date.now() - new Date(startedAt).getTime();
 
-  const seconds = Math.floor(timeDiff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const seconds = Math.floor(timeDiff / 1000) % 60;
+  const minutes = Math.floor(timeDiff / 1000 / 60) % 60;
+  const hours = Math.floor(timeDiff / 1000 / 3600) % 24;
+  const days = Math.floor(timeDiff / 1000 / 86400);
+
+  const formatTimeUnit = (value, unit) => `${value}${unit}`;
 
   if (days > 0) {
-    return `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
+    return `${formatTimeUnit(days, 'd')} ${formatTimeUnit(hours, 'h')} ${formatTimeUnit(minutes, 'm')} ${formatTimeUnit(seconds, 's')}`;
   } else if (hours > 0) {
-    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    return `${formatTimeUnit(hours, 'h')} ${formatTimeUnit(minutes, 'm')} ${formatTimeUnit(seconds, 's')}`;
   } else if (minutes > 0) {
-    return `${minutes}m ${seconds % 60}s`;
+    return `${formatTimeUnit(minutes, 'm')} ${formatTimeUnit(seconds, 's')}`;
   } else {
-    return `${seconds}s`;
+    return `${formatTimeUnit(seconds, 's')}`;
   }
-}
+};
 
 /**
  * Renders game information for a given game.
@@ -191,13 +187,7 @@ const getTimeSinceStarted = (startedAt) => {
  * @returns {void}
  */
 const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
-  const winRateColor = (winRate) => {
-    if (winRate < 30) return 'red';
-    if (winRate <= 50) return 'orange';
-    return 'green';
-  };
-
-  const url = 'https://aoe4world.com';
+  const winRateColor = (winRate) => winRate < 30 ? 'red' : winRate <= 50 ? 'orange' : 'green';
 
   /**
  * Fetches additional data for a player.
@@ -213,33 +203,31 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
 
     const rmTeam = data.modes.rm_team || {};
 
-    const date = new Date(started_at)
+    const date = new Date(rmTeam.started_at);
     const formattedDate = date.toLocaleDateString("en-GB");
     const formattedTime = date.toLocaleTimeString("en-GB");
+
+    const formatCivData = (civData, property) => {
+      return civData
+        ?.sort((a, b) => b[property] - a[property])
+        ?.slice(0, 3)
+        ?.map((civ) => `${civ.civilization} (${civ[property].toFixed(1)}%)`)
+        ?.join(", ") || [];
+    };
 
     return {
       name: player.name,
       civilization: player.civilization,
       profile_id: player.profile_id,
-      civilizationsByWinRate:
-        rmTeam.civilizations
-          ?.sort((a, b) => b.win_rate - a.win_rate)
-          ?.slice(0, 3)
-          ?.map((civ) => `${civ.civilization} (${civ.win_rate.toFixed(1)}%)`)
-          ?.join(', ') ?? [],
-      civilizationsByPickRate:
-        rmTeam.civilizations
-          ?.sort((a, b) => b.pick_rate - a.pick_rate)
-          ?.slice(0, 3)
-          ?.map((civ) => `${civ.civilization} (${civ.pick_rate.toFixed(1)}%)`)
-          ?.join(', ') ?? [],
+      civilizationsByWinRate: formatCivData(rmTeam.civilizations, "win_rate"),
+      civilizationsByPickRate: formatCivData(rmTeam.civilizations, "pick_rate"),
       rating: rmTeam.rating,
       rank: rmTeam.rank,
       gamesCount: rmTeam.games_count,
       winsCount: rmTeam.wins_count,
       streak: rmTeam.streak,
       started_at_date: formattedDate,
-      started_at_time: formattedTime
+      started_at_time: formattedTime,
     };
   };
 
@@ -288,8 +276,7 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
   ) => {
     const winPercentage = (winsCount / gamesCount) * 100;
     const winPercentageColor = winPercentage >= 50 ? 'green' : 'red';
-    const colorSpan = (civ) =>
-      `<span style="color:${winRateColor(Number(civ.match(/\d+(?:\.\d+)?/)[0]))}">${civ}</span>`;
+    const colorSpan = (civ) => `<span style="color:${winRateColor(Number(civ.match(/\d+(?:\.\d+)?/)[0]))}">${civ}</span>`;
     const formatCount = (count) => {
       const total = count || 0;
       const wins = winsCount || 0;
@@ -298,10 +285,11 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
     };
     const streakColor = streak >= 0 ? 'green' : 'red';
 
-    const playerDiv = `
+    return `
       <div class='player-box'>
-        <a class='player-name' href='https://aoe4world.com/players/${profile_id}' target="_blank"><strong>${index + 1
-      }) ${name}</strong></a>  
+        <a class='player-name' href='https://aoe4world.com/players/${profile_id}' target="_blank">
+          <strong>${index + 1}) ${name}</strong>
+        </a>  
         ${rating ? `<p class='player-rating'>Rating: <strong>${rating}</strong></p>` : ''}
         ${rank ? `<p class='player-rank'>Rank: <strong>${rank}</strong></p>` : ''}
         <p class='player-games'>Games: <strong>${formatCount(gamesCount)}</strong></p>
@@ -309,24 +297,15 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
         ${streak ? `<p class='player-streak'>Streak: <strong style="color:${streakColor}">${streak}</strong></p>` : ''}
         <p class='player-civilization'>Playing now as: <strong>${civilization}</strong></p>        
         <p class='player-pick-rate'>Pick Rate:</p>
-        <ol>${civilizationsByPickRate.length > 0
-        ? civilizationsByPickRate
-          .split(', ')
-          .map((civ) => `<li>${colorSpan(civ)}</li>`)
-          .join('')
-        : '<li>No data available</li>'
-      }</ol>
+        <ol>
+          ${civilizationsByPickRate.length > 0 ? civilizationsByPickRate.split(', ').map((civ) => `<li>${colorSpan(civ)}</li>`).join('') : '<li>No data available</li>'}
+        </ol>
         <p class='player-win-rate'>Win Rate:</p>
-        <ol>${civilizationsByWinRate.length > 0
-        ? civilizationsByWinRate
-          .split(', ')
-          .map((civ) => `<li>${colorSpan(civ)}</li>`)
-          .join('')
-        : '<li>No data available</li>'
-      }</ol>
+        <ol>
+          ${civilizationsByWinRate.length > 0 ? civilizationsByWinRate.split(', ').map((civ) => `<li>${colorSpan(civ)}</li>`).join('') : '<li>No data available</li>'}
+        </ol>
       </div>
     `;
-    return playerDiv;
   };
 
   /**
@@ -338,14 +317,18 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
  * @returns {number} - The calculated win chance, ranging from 0 to 1.
  */
   const calculatePlayerWinChance = (winRate, streak, { rating }) => {
-    if (isNaN(rating)) rating = 0.5;
-    if (isNaN(winRate)) winRate = 50; // set default winRate to 50
-    if (isNaN(streak)) streak = 0; // set default streak to 0
+    rating = isNaN(rating) ? 0.5 : rating;
+    winRate = isNaN(winRate) ? 50 : winRate;
+    streak = isNaN(streak) ? 0 : streak;
+
     let baseWinChance = winRate / 100;
-    if (baseWinChance === 0) baseWinChance = 0.01; // Fix divide-by-zero issue
+    baseWinChance = baseWinChance === 0 ? 0.01 : baseWinChance;
+
     const streakModifier = (Math.sign(streak) * Math.pow(Math.abs(streak), 0.75)) / 100 || 0;
     const ratingModifier = Math.max(Math.min((rating - 1600) / 1200, 0.5), -0.5);
+
     const winChance = baseWinChance + Math.abs(streakModifier) + Math.abs(ratingModifier);
+
     return Math.min(Math.max(winChance, 0), 1);
   };
 
@@ -357,14 +340,17 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
   const calculateTeamWinChance = (team) => {
     const playerWinChances = team.map(({ player }) => {
       const playerData = players.find((p) => p.profile_id === player.profile_id);
-      if (!playerData) return 0.5;
+      if (!playerData || playerData.winsCount === 0 || playerData.gamesCount === 0) {
+        return 0.5;
+      }
       const { winsCount, streak } = playerData;
-      if (winsCount === 0 || playerData.gamesCount === 0) return 0.5;
       const winRate = winsCount / playerData.gamesCount;
       return calculatePlayerWinChance(winRate, streak, playerData);
     });
+
     const teamWinChance = playerWinChances.reduce((acc, winChance) => acc + winChance, 0) / playerWinChances.length;
     const otherTeamWinChance = 1 - teamWinChance;
+
     return [teamWinChance, otherTeamWinChance];
   };
 
@@ -377,46 +363,59 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
   const createTeamDiv = (team, teamName, map, started_at) => {
     const teamRating = team.reduce((acc, { player }) => {
       const playerData = players.find((p) => p.profile_id === player.profile_id);
-      return acc + (playerData.rating || 0);
+      return acc + (playerData?.rating || 0);
     }, 0);
 
     const [teamWinChance, otherTeamWinChance] = calculateTeamWinChance(team);
+
+    const playerDivs = team.map(({ player }, index) => {
+      const playerData = players.find((p) => p.profile_id === player.profile_id);
+      return createPlayerDiv(playerData, index);
+    });
+
     const teamDiv = `
       <div class='team-info'>
         <h3>${teamName}: ${teamRating} Rating</h3>
         <p>Opponent Win Chance: ${(otherTeamWinChance * 100).toFixed(2)}%</p>
       </div>
-      ${team
-        .map(({ player }, index) => {
-          const playerData = players.find((p) => p.profile_id === player.profile_id);
-          return createPlayerDiv(playerData, index);
-        })
-        .join('')}
+      ${playerDivs.join('')}
     `;
 
     return teamDiv;
   };
-  // (${(teamWinChance * 100).toFixed(2)}% chance to win)
 
-  const date = new Date(started_at);
-  const formattedDate = date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short' });
-  const formattedTime = date.toLocaleTimeString("en-GB");
-  const timeSinceStarted = getTimeSinceStarted(started_at);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short' });
+  };
 
-  const gameInfoDiv = document.querySelector('.game-info');
-  gameInfoDiv.innerHTML = `
-  <div class='map-info'>
-      <h3>Map: ${map}</h3>
-      <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
-      <h3>Time since started: ${timeSinceStarted}</h3>
-    </div>
-    <div>
-      ${createTeamDiv(team1, 'Team 1')}
-    </div>
-    <div>
-      ${createTeamDiv(team2, 'Team 2')}
-    </div>
-  `;
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-GB");
+  };
+
+  const updateGameInfo = (map, started_at, team1, team2) => {
+    const formattedDate = formatDate(started_at);
+    const formattedTime = formatTime(started_at);
+    const timeSinceStarted = getTimeSinceStarted(started_at);
+
+    const gameInfoDiv = document.querySelector('.game-info');
+    gameInfoDiv.innerHTML = `
+      <div class='map-info'>
+        <h3>Map: ${map}</h3>
+        <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
+        <h3>Time since started: ${timeSinceStarted}</h3>
+      </div>
+      <div>
+        ${createTeamDiv(team1, 'Team 1')}
+      </div>
+      <div>
+        ${createTeamDiv(team2, 'Team 2')}
+      </div>
+    `;
+  };
+
+  updateGameInfo(map, started_at, team1, team2);
 };
 
 /**
@@ -425,7 +424,6 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
  * No parameters are required.
  * No return value.
  */
-
 const noGames = () => {
   const gameInfoDiv = document.querySelector('.game-info');
   gameInfoDiv.innerHTML = `
@@ -438,14 +436,27 @@ const noGames = () => {
  * @param {Array} teamToTrack - An array containing the members to track.
  * @returns {void}
  */
-teamToTrack.forEach(async (member) => {
-  const gameInfo = await getPlayerGameInfo(member.id);
-  if (gameInfo) {
-    renderGameInfo(gameInfo);
-  } else {
+const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
+
+Promise.all(gameInfoPromises)
+  .then((gameInfos) => {
+    const hasGameInfo = gameInfos.some((info) => info !== null);
+    if (hasGameInfo) {
+      gameInfos.forEach((gameInfo) => {
+        if (gameInfo) {
+          renderGameInfo(gameInfo);
+        } else {
+          noGames();
+        }
+      });
+    } else {
+      noGames();
+    }
+  })
+  .catch((error) => {
+    console.error(error);
     noGames();
-  }
-});
+  });
 
 /**
  * Checks the stored version of the app against the current version. If the stored version is null or different from the current version,
