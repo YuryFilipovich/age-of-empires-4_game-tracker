@@ -78,23 +78,23 @@ Please feel free to report any other issues you encounter by creating a new issu
 
 - [X] Integrate real-time updates for player game information
 - [X] Improve user interface and styling
-- [] Add support for tracking multiple teams simultaneously
-- [] Enhance player search and filtering capabilities
+- [ ] Add support for tracking multiple teams simultaneously
+- [ ] Enhance player search and filtering capabilities
 
 #### Version 1.2
 
-- [] Implement data visualization features (charts, graphs)
-- [] Introduce player comparison functionality
-- [] Add support for tracking tournament results
-- [] Enhance performance and optimization of the application
-- [] Future Releases
-- [] Expand platform support (mobile, desktop)
-- [] Implement social features (leaderboards, player profiles)
-- [] Integrate notifications for important player events
-- [] Enhance data analytics and insights
-- [] Support for localization and multiple languages
+- [ ] Implement data visualization features (charts, graphs)
+- [ ] Introduce player comparison functionality
+- [ ] Add support for tracking tournament results
+- [ ] Enhance performance and optimization of the application
+- [ ] Future Releases
+- [ ] Expand platform support (mobile, desktop)
+- [ ] Implement social features (leaderboards, player profiles)
+- [ ] Integrate notifications for important player events
+- [ ] Enhance data analytics and insights
+- [ ] Support for localization and multiple languages
 
 Please note that the roadmap is subject to change as the project progresses and new ideas emerge. It serves as a general guideline for future development plans and features, providing users with an overview of what to expect in upcoming releases.
 
 ## License
-This project is licensed under the [MIT License](https://github.com/YuryFilipovich/age-of-empires-4-game-tracker/blob/master/license).
+This project is licensed under the [MIT License](https://github.com/YuryFilipovich/age-of-empires-4_game-tracker/blob/master/license).
