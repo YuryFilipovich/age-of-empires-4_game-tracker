@@ -64,9 +64,6 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 
 Please ensure that your contributions adhere to the project's coding standards and follow the existing style.
 
-## Credits
-This project was developed by Yury Filipovich.
-
 ## Known Issues
 1. Win chance is calculated incorrectly: The current algorithm for calculating win chances may produce inaccurate results in certain scenarios. I am actively working on improving this calculation method.
 2. Not possible to track players if they are playing simultaneously different games: The current version of the application does not support tracking players who are playing different games simultaneously. I am investigating possible solutions to address this limitation.
@@ -103,5 +100,12 @@ Please feel free to report any other issues you encounter by creating a new issu
 
 Please note that the roadmap is subject to change as the project progresses and new ideas emerge. It serves as a general guideline for future development plans and features, providing users with an overview of what to expect in upcoming releases.
 
-## License
-This project is licensed under the [MIT License](https://github.com/YuryFilipovich/age-of-empires-4_game-tracker/blob/master/license).
+## Credits
+This project was developed by [Yury Filipovich](https://www.linkedin.com/in/yury-filipovich/) with the data from [AOE4 World](https://aoe4world.com/).
+
+## License and rights
+
+All of this data is open source, you may use it in your projects, websites and apps. However, Microsoft owns the Copyright on the game, and for this reason you can't use this data in commercial contexts, excepts as described in Microsoft's [Game Content Usage Rules](https://www.xbox.com/en-US/developers/rules). Whenever you are using the data in this repository or other media from Age of Empires 4, please make sure to abide by the rules.
+
+> Age Of Empires 4 © Microsoft Corporation.
+> Aoe4world/data was created under Microsoft's "[Game Content Usage Rules](https://www.xbox.com/en-US/developers/rules)" using assets from Age Of Empires 4, and it is not endorsed by or affiliated with Microsoft.
