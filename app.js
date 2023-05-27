@@ -49,6 +49,7 @@ const teamToTrack = [
   { id: '14204836-Fireflyczyk', nickname: 'Fireflyczyk' },
   { id: '11545849-xWilsen', nickname: 'xWilsen' },
   { id: '12169683-Pahlava', nickname: 'Pahlava' },
+  { id: '12158469-', nickname: 'Test Player' },
 ].sort((a, b) => a.nickname.localeCompare(b.nickname));
 
 /**
@@ -294,7 +295,6 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
       }) ${name}</strong></a>  
         ${rating ? `<p class='player-rating'>Rating: <strong>${rating}</strong></p>` : ''}
         ${rank ? `<p class='player-rank'>Rank: <strong>${rank}</strong></p>` : ''}
-        <p class='player-civilization'>Started at: <strong>${started_at_date} - ${started_at_time}</strong></p>
         <p class='player-games'>Games: <strong>${formatCount(gamesCount)}</strong></p>
         <p>Win Rate: <span style="color:${winPercentageColor}">${winPercentage.toFixed(2)}%</span></p>
         ${streak ? `<p class='player-streak'>Streak: <strong style="color:${streakColor}">${streak}</strong></p>` : ''}
@@ -366,35 +366,47 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
  * @param {string} teamName - The name of the team.
  * @returns {string} - A string containing the HTML representation of the team div.
  */
-  const createTeamDiv = (team, teamName) => {
+  const createTeamDiv = (team, teamName, map, started_at) => {
     const teamRating = team.reduce((acc, { player }) => {
       const playerData = players.find((p) => p.profile_id === player.profile_id);
       return acc + (playerData.rating || 0);
     }, 0);
 
     const [teamWinChance, otherTeamWinChance] = calculateTeamWinChance(team);
-
     const teamDiv = `
-      <div>
+      <div class='team-info'>
         <h3>${teamName}: ${teamRating} Rating</h3>
         <p>Opponent Win Chance: ${(otherTeamWinChance * 100).toFixed(2)}%</p>
-        ${team
+      </div>
+      ${team
         .map(({ player }, index) => {
           const playerData = players.find((p) => p.profile_id === player.profile_id);
           return createPlayerDiv(playerData, index);
         })
         .join('')}
-      </div>
     `;
 
     return teamDiv;
   };
   // (${(teamWinChance * 100).toFixed(2)}% chance to win)
 
+  const date = new Date(started_at);
+  const formattedDate = date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short' });
+  const formattedTime = date.toLocaleTimeString("en-GB");
+
   const gameInfoDiv = document.querySelector('.game-info');
   gameInfoDiv.innerHTML = `
-    ${createTeamDiv(team1, 'Team 1')}
-    ${createTeamDiv(team2, 'Team 2')}`;
+    <div>
+      ${createTeamDiv(team1, 'Team 1')}
+    </div>
+    <div class='map-info'>
+      <h3>Map: ${map}</h3>
+      <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
+    </div>
+    <div>
+      ${createTeamDiv(team2, 'Team 2')}
+    </div>
+  `;
 };
 
 /**
