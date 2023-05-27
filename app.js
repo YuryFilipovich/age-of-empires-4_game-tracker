@@ -4,8 +4,29 @@
  */
 const teamList = document.querySelector('.team-list');
 
+/**
+ * Represents the input field element in the input container.
+ * @type {HTMLInputElement}
+ */
 const inputField = document.querySelector('.input-container input');
+
+/**
+ * Represents the search button element in the input container.
+ * @type {HTMLElement}
+ */
 const searchButton = document.querySelector('.input-container .search-button');
+
+/**
+ * Represents the URL search parameters extracted from the current window's location.
+ * @type {URLSearchParams}
+ */
+const queryParams = new URLSearchParams(window.location.search);
+
+/**
+ * Represents the value of the 'id' query parameter extracted from the URL search parameters.
+ * @type {string | null}
+ */
+const queryParamPlayerId = queryParams.get('id');
 
 /**
  * Represents the stored version retrieved from local storage.
@@ -40,6 +61,11 @@ const url = 'https://aoe4world.com';
  */
 const teamToTrack = [];
 
+/**
+ * Fetches team data from the 'https://aoe4world.com/api/v0/leaderboards/rm_solo' endpoint.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of team data objects.
+ * @throws {Error} If an error occurs during the fetch operation.
+ */
 const fetchTeamData = () => {
   return new Promise((resolve, reject) => {
     fetch('https://aoe4world.com/api/v0/leaderboards/rm_solo')
@@ -486,27 +512,42 @@ const offlinePlayer = () => {
  * @param {Array} teamToTrack - An array containing the members to track.
  * @returns {void}
  */
-const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
+if (!queryParamPlayerId) {
+  const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
 
-Promise.all(gameInfoPromises)
-  .then((gameInfos) => {
-    const hasGameInfo = gameInfos.some((info) => info !== null);
-    if (hasGameInfo) {
-      gameInfos.forEach((gameInfo) => {
-        if (gameInfo) {
-          renderGameInfo(gameInfo);
-        } else {
-          noGames();
-        }
-      });
-    } else {
+  Promise.all(gameInfoPromises)
+    .then((gameInfos) => {
+      const hasGameInfo = gameInfos.some((info) => info !== null);
+      if (hasGameInfo) {
+        gameInfos.forEach((gameInfo) => {
+          if (gameInfo) {
+            renderGameInfo(gameInfo);
+          } else {
+            noGames();
+          }
+        });
+      } else {
+        noGames();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
       noGames();
-    }
-  })
-  .catch((error) => {
-    console.error(error);
-    noGames();
-  });
+    });
+} else {
+  getPlayerGameInfo(queryParamPlayerId)
+    .then((gameInfo) => {
+      if (gameInfo) {
+        renderGameInfo(gameInfo);
+      } else {
+        offlinePlayer();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      offlinePlayer();
+    })
+}
 
 /**
  * Checks the stored version of the app against the current version. If the stored version is null or different from the current version,
@@ -526,12 +567,20 @@ if (storedVersion === null || storedVersion !== currentVersion) {
   });
 }
 
-
+/**
+ * Adds an event listener to the input field to enable/disable the search button based on the input value.
+ * @param {Event} event - The event object triggered by the input.
+ * @returns {void}
+ */
 inputField.addEventListener('input', () => {
   searchButton.disabled = inputField.value.trim() === '';
 
 });
 
+/**
+ * Adds an event listener to the search button and processes the player ID based on the input value.
+ * @returns {void}
+ */
 searchButton.addEventListener('click', () => {
   if (searchButton.disabled) {
     return;
@@ -551,7 +600,13 @@ searchButton.addEventListener('click', () => {
   processPlayer(playerId);
 });
 
-
+/**
+ * Processes the player with the given player ID by retrieving game information,
+ * rendering the game info if available, displaying offline status otherwise,
+ * and redirecting to the player's page.
+ * @param {string} playerId - The ID of the player to process.
+ * @returns {void}
+ */
 const processPlayer = (playerId) => {
   getPlayerGameInfo(playerId)
     .then((gameInfo) => {
@@ -564,5 +619,19 @@ const processPlayer = (playerId) => {
     .catch((error) => {
       console.error(error);
       offlinePlayer();
+    })
+    .finally(() => {
+      redirectToPlayerPage(playerId);
     });
+};
+
+/**
+ * Redirects to the player's page with the specified player ID by opening a new window.
+ * @param {string} playerId - The ID of the player.
+ * @returns {void}
+ */
+const redirectToPlayerPage = (playerId) => {
+  const newPageURL = `https://age-of-empires-4-game-tracker.vercel.app/?id=${playerId}`;
+
+  window.open(newPageURL, '_blank');
 };
