@@ -82,7 +82,7 @@ Please feel free to report any other issues you encounter by creating a new issu
 
 - [X] Integrate real-time updates for player game information
 - [X] Improve user interface and styling
-- [ ] Add support for tracking multiple teams simultaneously
+- [ ] Add support for tracking multiple teams and players simultaneously
 - [ ] Enhance player search and filtering capabilities
 
 #### Version 1.2
