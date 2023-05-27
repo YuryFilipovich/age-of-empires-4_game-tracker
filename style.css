@@ -123,7 +123,7 @@ ul.team-list li:hover {
   margin: 0px 0px 10px 0px;
   height: 50px;
   transition: box-shadow 0.3s ease;
-  width: 100%; 
+  width: 100%;
   text-align: center;
 }
 
@@ -162,8 +162,8 @@ ul.team-list li:hover {
 }
 
 .player-box {
-  padding: 10px 40px;
-  height: 535px;
+  padding: 10px 50px;
+  height: 500px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -329,8 +329,8 @@ ol li:hover {
   }
 
   .player-box {
-    padding: 10px 25px;
-    height: auto;
+    padding: 10px 40px;
+    height: 420px;
   }
 
   .game-info {

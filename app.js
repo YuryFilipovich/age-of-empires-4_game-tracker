@@ -278,15 +278,6 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
       return `<span style="color:black">${total}</span>-<span style="color:green">${wins}</span>-<span style="color:red">${loses}</span>`;
     };
     const streakColor = streak >= 0 ? 'green' : 'red';
-    const hasImportantBadge =
-      civilizationsByWinRate && typeof civilizationsByWinRate === 'string'
-        ? civilizationsByWinRate
-          .split(', ')
-          .some((civ) => civ.split('(')[0].trim() === civilization && Number(civ.match(/\d+(?:\.\d+)?/)[0]) >= 50)
-        : false;
-    const importantBadge = hasImportantBadge
-      ? '<span style="color: red;">important</span>'
-      : '<span style="color: green;">Not important</span>';
 
     const playerDiv = `
       <div class='player-box'>
@@ -298,7 +289,6 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
         <p>Win Rate: <span style="color:${winPercentageColor}">${winPercentage.toFixed(2)}%</span></p>
         ${streak ? `<p class='player-streak'>Streak: <strong style="color:${streakColor}">${streak}</strong></p>` : ''}
         <p class='player-civilization'>Playing now as: <strong>${civilization}</strong></p>        
-        <p class='important-push'>Push: <strong> ${importantBadge}</strong></p>    
         <p class='player-pick-rate'>Pick Rate:</p>
         <ol>${civilizationsByPickRate.length > 0
         ? civilizationsByPickRate
