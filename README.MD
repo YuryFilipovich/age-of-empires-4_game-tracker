@@ -1,7 +1,7 @@
 # Age of Empires 4 Game Tracker
 
 Track the games and performance of Age of Empires 4 players in real-time. Get live updates and stats on player rankings, win rates, and more.
-You can find an example of how the app looks [here](https://aoe-4.vercel.app/)!
+You can find an example of how the app looks [here]([https://aoe-4.vercel.app/](https://age-of-empires-4-game-tracker.vercel.app/))!
 
 ## Description
 
