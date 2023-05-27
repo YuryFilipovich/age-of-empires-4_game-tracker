@@ -14,7 +14,7 @@ let storedVersion = localStorage.getItem('appVersion');
  * Represents the current version of the application.
  * @type {string}
  */
-let currentVersion = '1.1.0';
+let currentVersion = '1.1.1';
 
 /**
  * Represents the element that displays version information in the DOM.
@@ -49,7 +49,6 @@ const teamToTrack = [
   { id: '14204836-Fireflyczyk', nickname: 'Fireflyczyk' },
   { id: '11545849-xWilsen', nickname: 'xWilsen' },
   { id: '12169683-Pahlava', nickname: 'Pahlava' },
-  { id: '12158469-', nickname: 'Test Player' },
 ].sort((a, b) => a.nickname.localeCompare(b.nickname));
 
 /**
@@ -396,12 +395,12 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
 
   const gameInfoDiv = document.querySelector('.game-info');
   gameInfoDiv.innerHTML = `
-    <div>
-      ${createTeamDiv(team1, 'Team 1')}
-    </div>
-    <div class='map-info'>
+  <div class='map-info'>
       <h3>Map: ${map}</h3>
       <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
+    </div>
+    <div>
+      ${createTeamDiv(team1, 'Team 1')}
     </div>
     <div>
       ${createTeamDiv(team2, 'Team 2')}
