@@ -31,24 +31,17 @@ const url = 'https://aoe4world.com';
 
 /**
  * Represents a sorted list of teams to track.
- * @typedef {Object} TeamToTrack
- * @property {string} id - The unique identifier of the player. example: 14711962-Samui_Sanchez - (https://aoe4world.com/players/14711962-Samui_Sanchez)
+ * @typedef {Object} TeamToTrack[]
+ * @property {string} id - The unique identifier of the player.
  * @property {string} nickname - The nickname or name of the player you want.
  */
-
-/**
- * Represents an array of teams to track, sorted alphabetically by nickname.
- * @type {TeamToTrack[]}
- */
+// example: 
+// https://aoe4world.com/players/14711962-Samui_Sanchez - AOE4World profile link
+// id: 14711962-Samui_Sanchez
+// nickname: Samui_Sanchez (but can be any nickname You want)
 const teamToTrack = [
-  { id: '9505061-tito', nickname: 'tito' },
-  { id: '9514244-Meow', nickname: 'Meow' },
-  { id: '14939680-DikiyXYI', nickname: 'DikiyXYI' },
-  { id: '10265510-MidTortoise9435', nickname: 'MidTortoise9435' },
-  { id: '14711962-Samui_Sanchez', nickname: 'Samui_Sanchez' },
-  { id: '14204836-Fireflyczyk', nickname: 'Fireflyczyk' },
-  { id: '11545849-xWilsen', nickname: 'xWilsen' },
-  { id: '12169683-Pahlava', nickname: 'Pahlava' },
+  { id: '123456789-abc', nickname: 'abc' },
+  { id: '123456789-abc', nickname: 'abc' },
 ].sort((a, b) => a.nickname.localeCompare(b.nickname));
 
 /**
