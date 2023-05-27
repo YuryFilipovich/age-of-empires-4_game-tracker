@@ -160,19 +160,21 @@ const getPlayerGameInfo = async (playerId) => {
   }
 };
 
-
+/**
+ * Calculates the time elapsed since a specific starting time.
+ * @param {string} startedAt - The starting time in ISO 8601 format.
+ * @returns {string} The formatted time elapsed in the format "Xd Xh Xm Xs", where X represents the number of days, hours, minutes, and seconds respectively.
+*/
 const getTimeSinceStarted = (startedAt) => {
   const startedTime = new Date(startedAt).getTime();
   const currentTime = Date.now();
   const timeDiff = currentTime - startedTime;
 
-  // Calculate time units
   const seconds = Math.floor(timeDiff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  // Format the time since started
   if (days > 0) {
     return `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
   } else if (hours > 0) {
@@ -433,7 +435,7 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
 const noGames = () => {
   const gameInfoDiv = document.querySelector('.game-info');
   gameInfoDiv.innerHTML = `
-    <h1 class='no-games'>No one is playing right now</h1>`;
+    <h1 class='no-games'>No one is playing from the list right now</h1>`;
 };
 
 /**
