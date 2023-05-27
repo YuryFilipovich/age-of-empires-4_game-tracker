@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta tags -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Track the games and performance of Age of Empires 4 players in real time. Get live updates and stats on player rankings, win rates, and more." />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Favicon for all platforms -->
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+  <!-- Favicon for iOS (iPhone, iPad) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+  <!-- Favicon for Android (Chrome) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="images/android-chrome-512x512.png">
+
+  <!-- Page title -->
+  <title>Age Of Empires 4 Game Tracker</title>
+</head>
+
+<body>
+  <!-- Main container -->
+  <div class="container">
+    <!-- Team list container -->
+    <div class="team-list-container">
+      <ul class="team-list"></ul>
+    </div>
+
+    <!-- Game info container -->
+    <div class="game-info"></div>
+  </div>
+
+  <!-- Update popup -->
+  <div id="update-popup" style="display: none">
+    <h2>New Update Available</h2>
+    <p>Here's what's new:</p>
+    <ul>
+      <li>
+        The new logic added to calculate the win chance of team based on players
+        <strong>win rate, current rating, and winning/losing streak</strong>, with various modifiers applied to each
+        factor.
+      </li>
+      <li>
+        <i>Push or not to push</i> logic was updated based on players' statistics and current playing civilization.
+      </li>
+      <li><strong>New popup</strong> indicating the most current updates.</li>
+    </ul>
+    <button id="close-popup">Close</button>
+  </div>
+
+  <!-- Version info -->
+  <div class="version-info">
+    <p class="version-info-text"></p>
+  </div>
+
+  <!-- JavaScript file -->
+  <script src="app.js"></script>
+</body>
+
+</html>
