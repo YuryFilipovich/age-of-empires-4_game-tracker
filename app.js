@@ -4,6 +4,9 @@
  */
 const teamList = document.querySelector('.team-list');
 
+const inputField = document.querySelector('.input-container input');
+const searchButton = document.querySelector('.input-container .search-button');
+
 /**
  * Represents the stored version retrieved from local storage.
  * @type {string|null}
@@ -35,14 +38,55 @@ const url = 'https://aoe4world.com';
  * @property {string} id - The unique identifier of the player.
  * @property {string} nickname - The nickname or name of the player you want.
  */
-// example: 
-// https://aoe4world.com/players/14711962-Samui_Sanchez - AOE4World profile link
-// id: 14711962-Samui_Sanchez
-// nickname: Samui_Sanchez (but can be any nickname You want)
-// { id: '14711962-Samui_Sanchez', nickname: 'Samui_Sanchez' },
-const teamToTrack = [
-  { id: '12345678910-abc', nickname: 'abc' },
-].sort((a, b) => a.nickname.localeCompare(b.nickname));
+const teamToTrack = [];
+
+const fetchTeamData = () => {
+  return new Promise((resolve, reject) => {
+    fetch('https://aoe4world.com/api/v0/leaderboards/rm_solo')
+      .then(response => response.json())
+      .then(data => {
+        const players = data.players.slice(0, 21);
+
+        players.forEach(player => {
+          const id = player.profile_id.toString();
+          const nickname = player.name;
+          const profileUrl = player.site_url;
+
+          teamToTrack.push({ id, nickname, profileUrl });
+        });
+
+        teamToTrack.sort((a, b) => b.rating - a.rating);
+
+        resolve(teamToTrack);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+fetchTeamData()
+  .then(updatedTeamToTrack => {
+    const namesList = updatedTeamToTrack.map((member) => `
+      <li class='dis-friends' data-member-id="${member.id}">
+        <span class="nickname-container">
+          <span class="nickname">Nickname:
+            <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
+            </br> id: ${member.id}
+          </span>
+          <span class="playing-badge">Loading...</span>
+        </span><br>
+      </li>
+    `).join('');
+
+    teamList.innerHTML = namesList;
+
+    updatePlayingStatus();
+  })
+  .catch(error => {
+    console.log('Error:', error);
+  });
+
 
 /**
  * Logs whether the player is currently playing a game.
@@ -430,6 +474,12 @@ const noGames = () => {
     <h1 class='no-games'>No one is playing from the list right now</h1>`;
 };
 
+const offlinePlayer = () => {
+  const gameInfoDiv = document.querySelector('.game-info');
+  gameInfoDiv.innerHTML = `
+    <h1 class='no-games'>Seems the player you are trying to find is currently offline</h1>`;
+};
+
 /**
  * Retrieves game information for each member in the team to track and renders the game info or displays a message if no games are found.
  * 
@@ -475,3 +525,44 @@ if (storedVersion === null || storedVersion !== currentVersion) {
     localStorage.setItem('appVersion', currentVersion);
   });
 }
+
+
+inputField.addEventListener('input', () => {
+  searchButton.disabled = inputField.value.trim() === '';
+
+});
+
+searchButton.addEventListener('click', () => {
+  if (searchButton.disabled) {
+    return;
+  }
+
+  const link = inputField.value.trim();
+  let playerId;
+
+  if (link.includes("/players/")) {
+    playerId = link.split("/players/")[1];
+  } else if (link.includes("-")) {
+    playerId = link;
+  } else {
+    playerId = link;
+  }
+
+  processPlayer(playerId);
+});
+
+
+const processPlayer = (playerId) => {
+  getPlayerGameInfo(playerId)
+    .then((gameInfo) => {
+      if (gameInfo) {
+        renderGameInfo(gameInfo);
+      } else {
+        offlinePlayer();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      offlinePlayer();
+    });
+};
