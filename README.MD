@@ -45,8 +45,9 @@ This project is a web application that allows you to track the games and perform
 
 2. Extract the ZIP archive to a desired location on your computer.
 
-3. Open the index.html file in a web browser.
-4. Track the games and performance of Age of Empires 4 players!   
+3. Replace the `teamToTrack` `id` and `nickname` with the players you want to track from [here](https://aoe4world.com). `Id` can be retrieved from the player's URL (example  https://aoe4world.com/players/14711962-Samui_Sanchez - 14711962-Samui_Sanchez)
+4. Open the index.html file in a web browser.
+5. Track the games and performance of Age of Empires 4 players!   
 
 ## Contribution
 Contributions are welcome! If you find any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request. Here's how you can contribute:
