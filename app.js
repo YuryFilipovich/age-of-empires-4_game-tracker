@@ -39,6 +39,7 @@ const url = 'https://aoe4world.com';
 // https://aoe4world.com/players/14711962-Samui_Sanchez - AOE4World profile link
 // id: 14711962-Samui_Sanchez
 // nickname: Samui_Sanchez (but can be any nickname You want)
+// { id: '14711962-Samui_Sanchez', nickname: 'Samui_Sanchez' },
 const teamToTrack = [
   { id: '123456789-abc', nickname: 'abc' },
   { id: '123456789-abc', nickname: 'abc' },
