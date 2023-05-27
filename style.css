@@ -25,7 +25,7 @@ body {
   grid-template-columns: 30% 70%;
   grid-gap: 20px;
   margin: 20px;
-  align-items: flex-start; 
+  align-items: flex-start;
 }
 
 .team-list {
@@ -447,11 +447,50 @@ ol li:hover {
 .version-info {
   background-color: #f2f2f2;
   padding: 10px;
-  font-size: 14px;
   text-align: center;
   margin: 10px 15px;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.version-info-text {
+  margin: 0;
+  font-size: 14px;
+}
+
+.version-info-links {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.version-info a {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 10px;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.version-info a svg {
+  fill: #333;
+  width: 25px;
+  height: 25px;
+  transition: fill 0.3s ease;
+}
+
+.version-info a:hover {
+  color: #007bff;
+}
+
+.version-info a:hover svg {
+  fill: #007bff;
+}
+
 
 /* Styles for screens up to 768px */
 @media screen and (max-width: 768px) {

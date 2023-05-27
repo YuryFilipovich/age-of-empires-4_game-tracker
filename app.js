@@ -1,4 +1,10 @@
 /**
+ * Represents the current version of the application.
+ * @type {string}
+ */
+let currentVersion = '1.1.1';
+
+/**
  * Represents the team list element in the DOM.
  * @type {Element}
  */
@@ -33,12 +39,6 @@ const queryParamPlayerId = queryParams.get('id');
  * @type {string|null}
  */
 let storedVersion = localStorage.getItem('appVersion');
-
-/**
- * Represents the current version of the application.
- * @type {string}
- */
-let currentVersion = '1.1.1';
 
 /**
  * Represents the element that displays version information in the DOM.
