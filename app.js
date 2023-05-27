@@ -161,6 +161,29 @@ const getPlayerGameInfo = async (playerId) => {
 };
 
 
+const getTimeSinceStarted = (startedAt) => {
+  const startedTime = new Date(startedAt).getTime();
+  const currentTime = Date.now();
+  const timeDiff = currentTime - startedTime;
+
+  // Calculate time units
+  const seconds = Math.floor(timeDiff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  // Format the time since started
+  if (days > 0) {
+    return `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${seconds % 60}s`;
+  } else {
+    return `${seconds}s`;
+  }
+}
+
 /**
  * Renders game information for a given game.
  * @param {Object} gameData - The game data object containing player and game information.
@@ -382,12 +405,14 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
   const date = new Date(started_at);
   const formattedDate = date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short' });
   const formattedTime = date.toLocaleTimeString("en-GB");
+  const timeSinceStarted = getTimeSinceStarted(started_at);
 
   const gameInfoDiv = document.querySelector('.game-info');
   gameInfoDiv.innerHTML = `
   <div class='map-info'>
       <h3>Map: ${map}</h3>
       <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
+      <h3>Time since started: ${timeSinceStarted}</h3>
     </div>
     <div>
       ${createTeamDiv(team1, 'Team 1')}
