@@ -28,43 +28,6 @@ This project is a web application that allows you to track the games and perform
 - CSS
 - JavaScript
 
-## Usage
-
-### Option 1: Clone the Repository
-
-1. Clone the repository:
-
-   ```shell
-   git clone https://github.com/your-username/age-of-empires-4-game-tracker.git
-2. Replace the `teamToTrack` `id` and `nickname` with the players you want to track from [here](https://aoe4world.com). `Id` can be retrieved from the player's URL (example  https://aoe4world.com/players/14711962-Samui_Sanchez - 14711962-Samui_Sanchez)
-3. Open the index.html file in a web browser.
-4. Track the games and performance of Age of Empires 4 players!   
-
-### Option 2: Manual Download
-
-1. Download the project files as a ZIP archive by clicking on the "Code" button in the repository.
-
-2. Extract the ZIP archive to a desired location on your computer.
-
-3. Replace the `teamToTrack` `id` and `nickname` with the players you want to track from [here](https://aoe4world.com). `Id` can be retrieved from the player's URL (example  https://aoe4world.com/players/14711962-Samui_Sanchez - 14711962-Samui_Sanchez)
-4. Open the index.html file in a web browser.
-5. Track the games and performance of Age of Empires 4 players!   
-
-## Contribution
-Contributions are welcome! If you find any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request. Here's how you can contribute:
-
-1. Fork the repository.
-
-2. Create a new branch: git checkout -b feature/your-feature-name.
-
-3. Make your changes and commit them: git commit -m 'Add some feature'.
-
-4. Push to the branch: git push origin feature/your-feature-name.
-
-5. Open a pull request.
-
-Please ensure that your contributions adhere to the project's coding standards and follow the existing style.
-
 ## Known Issues
 1. Win chance is calculated incorrectly: The current algorithm for calculating win chances may produce inaccurate results in certain scenarios. I am actively working on improving this calculation method.
 2. Not possible to track players if they are playing simultaneously different games: The current version of the application does not support tracking players who are playing different games simultaneously. I am investigating possible solutions to address this limitation.
