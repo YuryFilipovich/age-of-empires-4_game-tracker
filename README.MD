@@ -6,6 +6,12 @@ Track the games and performance of Age of Empires 4 players in real-time. Get li
 
 This project is a web application that allows you to track the games and performance of Age of Empires 4 players. It provides real-time updates on player rankings, win rates, and other statistics.
 
+## Screenshots
+
+![Screenshot 1](images/screenshots/screenshot-1.png)
+![Screenshot 2](images/screenshots/screenshot-2.png)
+![Screenshot 3](images/screenshots/screenshot-3.png)
+
 ## Features
 
 - Real-time tracking of Age of Empires 4 player games and performance
