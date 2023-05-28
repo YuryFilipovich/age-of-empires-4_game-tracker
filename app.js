@@ -2,7 +2,7 @@
  * Represents the current version of the application.
  * @type {string}
  */
-let currentVersion = '1.22';
+let currentVersion = '1.2.0';
 
 /**
  * Represents the body element in the DOM.
