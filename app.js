@@ -138,20 +138,28 @@ const fetchTeamData = () => {
 }
 
 if (!queryParamPlayerId) {
+  const loadingContainer = document.querySelector('.loading-container');
+  const teamList = document.querySelector('.team-list');
+
+  // Show loading wheel
+  loadingContainer.innerHTML = '<div class="loading"><span class="loading-wheel"></span>Loading...</div>';
+
   fetchTeamData()
     .then(updatedTeamToTrack => {
       const namesList = updatedTeamToTrack.map((member) => `
-      <li class='dis-friends' data-member-id="${member.id}">
-        <span class="nickname-container">
-          <span class="nickname">Nickname:
-            <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
-            </br> id: ${member.id}
+        <li class='dis-friends' data-member-id="${member.id}">
+          <span class="nickname-container">
+            <span class="nickname">Nickname:
+              <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
+            </span>
+            <span class="playing-badge">Loading...</span>
           </span>
-          <span class="playing-badge">Loading...</span>
-        </span><br>
-      </li>
-    `).join('');
+          <p class="nickname">id: ${member.id}</p>
+        </li>
+      `).join('');
 
+      // Replace loading wheel with the actual content
+      loadingContainer.innerHTML = ''; // Remove loading wheel container content
       teamList.innerHTML = namesList;
 
       updatePlayingStatus();
@@ -159,8 +167,8 @@ if (!queryParamPlayerId) {
     .catch(error => {
       console.log('Error:', error);
     });
-
 }
+
 
 /**
  * Logs whether the player is currently playing a game.

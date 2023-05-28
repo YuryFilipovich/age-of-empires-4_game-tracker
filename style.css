@@ -552,6 +552,41 @@ ol li:hover {
   }
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  color: #333;
+}
+
+.loading-wheel {
+  width: 30px;
+  height: 30px;
+  border: 4px solid #333;
+  border-top-color: #777;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .version-info {
   background-color: #f2f2f2;
   padding: 10px;
