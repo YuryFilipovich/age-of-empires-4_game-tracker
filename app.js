@@ -91,9 +91,10 @@ const fetchTeamData = () => {
   });
 }
 
-fetchTeamData()
-  .then(updatedTeamToTrack => {
-    const namesList = updatedTeamToTrack.map((member) => `
+if (!queryParamPlayerId) {
+  fetchTeamData()
+    .then(updatedTeamToTrack => {
+      const namesList = updatedTeamToTrack.map((member) => `
       <li class='dis-friends' data-member-id="${member.id}">
         <span class="nickname-container">
           <span class="nickname">Nickname:
@@ -105,14 +106,15 @@ fetchTeamData()
       </li>
     `).join('');
 
-    teamList.innerHTML = namesList;
+      teamList.innerHTML = namesList;
 
-    updatePlayingStatus();
-  })
-  .catch(error => {
-    console.log('Error:', error);
-  });
+      updatePlayingStatus();
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
 
+}
 
 /**
  * Logs whether the player is currently playing a game.
