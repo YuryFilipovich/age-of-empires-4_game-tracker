@@ -442,7 +442,6 @@ ol li:hover {
   margin-bottom: 5px;
 }
 
-
 #update-popup {
   position: fixed;
   margin: 0 auto;
@@ -599,7 +598,6 @@ ol li:hover {
 .version-info a:hover svg {
   fill: #007bff;
 }
-
 
 /* Styles for screens up to 768px */
 @media screen and (max-width: 768px) {

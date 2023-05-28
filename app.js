@@ -34,6 +34,28 @@ const overlay = document.querySelector('.overlay');
  */
 const teamList = document.querySelector('.team-list');
 
+
+/**
+ * Finds the first <li> element within the team list.
+ *
+ * @type {Element|null} The first <li> element found, or null if not found.
+ */
+const listItem = teamList.querySelector('li');
+
+/**
+ * Selects the team list container element from the DOM.
+ *
+ * @type {Element|null} The team list container element, or null if not found.
+ */
+const teamListContainer = document.querySelector('.team-list-container');
+
+/**
+ * Selects the version info element from the DOM.
+ *
+ * @type {Element|null} The version info element, or null if not found.
+ */
+const versionInfo = document.querySelector('.version-info');
+
 /**
  * Represents the input field element in the input container.
  * @type {HTMLInputElement}
@@ -68,8 +90,8 @@ let storedVersion = localStorage.getItem('appVersion');
  * Represents the element that displays version information in the DOM.
  * @type {Element}
  */
-let versionInfo = document.querySelector('.version-info-text');
-versionInfo.innerText = `Version ${currentVersion}`;
+const versionInfoText = document.querySelector('.version-info-text');
+versionInfoText.innerText = `Version ${currentVersion}`;
 
 /**
  * Represents the base URL of the AOE4 World website.
@@ -693,3 +715,14 @@ images.forEach(image => {
     image.classList.toggle('enlarged');
   });
 });
+
+/**
+ * Checks if a list item exists and appends the version info element to the team list container if it doesn't exist.
+ *
+ * @param {Element|null} listItem - The list item element to check.
+ * @param {Element} teamListContainer - The container element for the team list.
+ * @param {Element} versionInfo - The version info element to append.
+ */
+if (!listItem) {
+  teamListContainer.appendChild(versionInfo);
+}
