@@ -10,18 +10,100 @@ body {
   background-color: #f9f9f9;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  overflow: auto;
+  transition: opacity 0.3s ease;
+}
+
+.overlay button {
+  display: block;
+  margin: 10px auto 0;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: default;
+  transition: background-color 0.3s
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.overlay-content img {
+  max-width: 100%;
+  width: 350px;
+  height: auto;
+  display: block;
+  margin: 10px auto;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.overlay-content .enlarge-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.overlay-content .enlarge-image.enlarged {
+  transform: scale(1.6);
+}
+
+.info-icon {
+  fill: #2196f3;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.redirect-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-container input::placeholder {
+  font-size: 12px;
+}
+
 .redirect-button {
   display: inline-block;
-  width: 100%;
-  max-width: 120px;
   padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  text-decoration: none;
   background-color: #007bff;
   color: #fff;
+  font-size: 16px;
   border-radius: 5px;
+  text-decoration: none;
   transition: background-color 0.3s ease;
 }
 
@@ -360,16 +442,20 @@ ol li:hover {
   margin-bottom: 5px;
 }
 
+
 #update-popup {
   position: fixed;
   margin: 0 auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   background-color: white;
   padding: 20px;
   border-radius: 5px;
+  z-index: 999;
+  transition: opacity 0.3s ease;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -471,7 +557,7 @@ ol li:hover {
   background-color: #f2f2f2;
   padding: 10px;
   text-align: center;
-  margin: 10px 15px;
+  margin: 10px 0;
   border-radius: 5px;
   display: flex;
   flex-direction: column;

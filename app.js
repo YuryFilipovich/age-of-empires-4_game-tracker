@@ -2,7 +2,31 @@
  * Represents the current version of the application.
  * @type {string}
  */
-let currentVersion = '1.1.1';
+let currentVersion = '1.22';
+
+/**
+ * Represents the body element in the DOM.
+ * @type {Element}
+ */
+const body = document.querySelector('body');
+
+/**
+ * Represents a collection of images that can be enlarged on click.
+ * @type {NodeListOf<HTMLImageElement>} - The list of images.
+ */
+const images = document.querySelectorAll('.enlarge-image');
+
+/**
+ * Represents the information icon element.
+ * @type {HTMLElement} - The information icon element.
+ */
+const infoIcon = document.querySelector('.info-icon');
+
+/**
+ * Represents the overlay element.
+ * @type {HTMLElement} - The overlay element.
+ */
+const overlay = document.querySelector('.overlay');
 
 /**
  * Represents the team list element in the DOM.
@@ -637,3 +661,35 @@ const redirectToPlayerPage = (playerId) => {
 
   window.open(newPageURL, '_blank');
 };
+
+/**
+ * Adds a click event listener to the infoIcon element.
+ * When clicked, it adds the 'show' class to the overlay element.
+ * @event infoIcon#click
+ * @callback
+ */
+infoIcon.addEventListener('click', () => {
+  overlay.classList.add('show');
+});
+
+/**
+ * Adds a click event listener to the close-overlay element.
+ * When clicked, it removes the 'show' class from the overlay element.
+ * @event close-overlay#click
+ * @callback
+ */
+document.querySelector('.close-overlay').addEventListener('click', () => {
+  overlay.classList.remove('show');
+});
+
+/**
+ * Adds a click event listener to each image in the images collection.
+ * When clicked, it toggles the 'enlarged' class on the clicked image.
+ * @event image#click
+ * @callback
+ */
+images.forEach(image => {
+  image.addEventListener('click', () => {
+    image.classList.toggle('enlarged');
+  });
+});
