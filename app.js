@@ -139,55 +139,39 @@ const fetchTeamData = () => {
 }
 
 if (!queryParamPlayerId) {
+  const loadingContainer = document.querySelector('.loading-container');
+  const teamList = document.querySelector('.team-list');
+
+  // Show loading wheel
+  loadingContainer.innerHTML = '<div class="loading"><span class="loading-wheel"></span>Loading...</div>';
+
   fetchTeamData()
     .then(updatedTeamToTrack => {
-      const loadingContainer = document.querySelector('.loading-container');
-      const teamList = document.querySelector('.team-list');
-
       const namesList = updatedTeamToTrack.map((member) => `
-      <li class='dis-friends' data-member-id="${member.id}">
-        <span class="nickname-container">
-          <span class="nickname">Nickname:
-            <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
+        <li class='dis-friends' data-member-id="${member.id}">
+          <span class="nickname-container">
+            <span class="nickname">Nickname:
+              <a href='https://aoe4world.com/players/${member.id}' target="_blank">${member.nickname}</a>
+            </span>
+            <span class="playing-badge">Loading...</span>
           </span>
-          <span class="playing-badge">Loading...</span>
-        </span>
-        <p class="nickname">id: ${member.id}</p>
-      </li>
-    `).join('');
+          <p class="nickname">id: ${member.id}</p>
+        </li>
+      `).join('');
 
-      loadingContainer.innerHTML = '';
+      // Replace loading wheel with the actual content
+      loadingContainer.innerHTML = ''; // Remove loading wheel container content
       teamList.innerHTML = namesList;
 
       updatePlayingStatus();
-
-      const gameInfoPromises = updatedTeamToTrack.map((member) => getPlayerGameInfo(member.id));
-
-      Promise.all(gameInfoPromises)
-        .then((gameInfos) => {
-          const hasGameInfo = gameInfos.some((info) => info !== null);
-          if (hasGameInfo) {
-            gameInfos.forEach((gameInfo) => {
-              if (gameInfo) {
-                renderGameInfo(gameInfo);
-              } else {
-                noGames();
-              }
-            });
-          } else {
-            noGames();
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          noGames();
-        });
     })
     .catch(error => {
       console.log('Error:', error);
     });
-  redirectBtn.style.display = 'none';
+
+    redirectBtn.style.display = 'none'
 }
+
 
 /**
  * Logs whether the player is currently playing a game.
@@ -580,6 +564,49 @@ const offlinePlayer = () => {
   gameInfoDiv.innerHTML = `
     <h1 class='no-games'>Seems the player you are trying to find is currently offline</h1>`;
 };
+
+/**
+ * Retrieves game information for each member in the team to track and renders the game info or displays a message if no games are found.
+ * 
+ * @param {Array} teamToTrack - An array containing the members to track.
+ * @returns {void}
+ */
+if (!queryParamPlayerId) {
+  const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
+
+  Promise.all(gameInfoPromises)
+    .then((gameInfos) => {
+      const hasGameInfo = gameInfos.some((info) => info !== null);
+      if (hasGameInfo) {
+        gameInfos.forEach((gameInfo) => {
+          if (gameInfo) {
+            renderGameInfo(gameInfo);
+          } else {
+            noGames();
+          }
+        });
+      } else {
+        noGames();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      noGames();
+    });
+} else {
+  getPlayerGameInfo(queryParamPlayerId)
+    .then((gameInfo) => {
+      if (gameInfo) {
+        renderGameInfo(gameInfo);
+      } else {
+        offlinePlayer();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      offlinePlayer();
+    })
+}
 
 /**
  * Checks the stored version of the app against the current version. If the stored version is null or different from the current version,
