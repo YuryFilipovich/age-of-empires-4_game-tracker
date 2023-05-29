@@ -101,6 +101,49 @@ versionInfoText.innerText = `Version ${currentVersion}`;
 const url = 'https://aoe4world.com';
 
 /**
+ * Retrieves game information for a player with the given playerId.
+ * @param {string} playerId - The unique identifier of the player.
+ * @returns {Promise<Object|null>} - A promise that resolves to an object containing game information if available, or null if no game information is found or an error occurs.
+ */
+const getPlayerGameInfo = async (playerId) => {
+  try {
+    const response = await fetch(`${url}/api/v0/players/${playerId}/games`);
+    const dispatchData = await response.json();
+
+    const games = dispatchData.games;
+    const ongoingOrJustFinishedGames = games.filter(game => game.ongoing || game.just_finished);
+
+    if (ongoingOrJustFinishedGames.length > 0) {
+      const gameInfo = {
+        playerId,
+        team1: ongoingOrJustFinishedGames[0].teams[0],
+        team2: ongoingOrJustFinishedGames[0].teams[1],
+        map: ongoingOrJustFinishedGames[0].map,
+        started_at: ongoingOrJustFinishedGames[0].started_at
+      };
+      return gameInfo;
+    } else if (games.length > 1) {
+      const secondGameOngoingOrJustFinished = games.slice(1).find(game => game.ongoing || game.just_finished);
+
+      if (secondGameOngoingOrJustFinished) {
+        const gameInfo = {
+          playerId,
+          team1: secondGameOngoingOrJustFinished.teams[0],
+          team2: secondGameOngoingOrJustFinished.teams[1],
+          map: secondGameOngoingOrJustFinished.map,
+          started_at: secondGameOngoingOrJustFinished.started_at
+        };
+        return gameInfo;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+};
+
+/**
  * Represents a sorted list of teams to track.
  * @typedef {Object} TeamToTrack[]
  * @property {string} id - The unique identifier of the player.
@@ -142,7 +185,6 @@ if (!queryParamPlayerId) {
   const loadingContainer = document.querySelector('.loading-container');
   const teamList = document.querySelector('.team-list');
 
-  // Show loading wheel
   loadingContainer.innerHTML = '<div class="loading"><span class="loading-wheel"></span>Loading...</div>';
 
   fetchTeamData()
@@ -159,17 +201,51 @@ if (!queryParamPlayerId) {
         </li>
       `).join('');
 
-      // Replace loading wheel with the actual content
-      loadingContainer.innerHTML = ''; // Remove loading wheel container content
+      loadingContainer.innerHTML = '';
       teamList.innerHTML = namesList;
 
       updatePlayingStatus();
+
+      const gameInfoPromises = updatedTeamToTrack.map((member) => getPlayerGameInfo(member.id));
+
+      Promise.all(gameInfoPromises)
+        .then((gameInfos) => {
+          const hasGameInfo = gameInfos.some((info) => info !== null);
+          if (hasGameInfo) {
+            gameInfos.forEach((gameInfo) => {
+              if (gameInfo) {
+                renderGameInfo(gameInfo);
+              } else {
+                noGames();
+              }
+            });
+          } else {
+            noGames();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          noGames();
+        });
     })
     .catch(error => {
       console.log('Error:', error);
     });
 
-    redirectBtn.style.display = 'none'
+  redirectBtn.style.display = 'none';
+} else {
+  getPlayerGameInfo(queryParamPlayerId)
+    .then((gameInfo) => {
+      if (gameInfo) {
+        renderGameInfo(gameInfo);
+      } else {
+        offlinePlayer();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      offlinePlayer();
+    });
 }
 
 
@@ -235,49 +311,6 @@ teamList.innerHTML = namesList;
 
 /* Update the playing status */
 updatePlayingStatus();
-
-/**
- * Retrieves game information for a player with the given playerId.
- * @param {string} playerId - The unique identifier of the player.
- * @returns {Promise<Object|null>} - A promise that resolves to an object containing game information if available, or null if no game information is found or an error occurs.
- */
-const getPlayerGameInfo = async (playerId) => {
-  try {
-    const response = await fetch(`${url}/api/v0/players/${playerId}/games`);
-    const dispatchData = await response.json();
-
-    const games = dispatchData.games;
-    const ongoingOrJustFinishedGames = games.filter(game => game.ongoing || game.just_finished);
-
-    if (ongoingOrJustFinishedGames.length > 0) {
-      const gameInfo = {
-        playerId,
-        team1: ongoingOrJustFinishedGames[0].teams[0],
-        team2: ongoingOrJustFinishedGames[0].teams[1],
-        map: ongoingOrJustFinishedGames[0].map,
-        started_at: ongoingOrJustFinishedGames[0].started_at
-      };
-      return gameInfo;
-    } else if (games.length > 1) {
-      const secondGameOngoingOrJustFinished = games.slice(1).find(game => game.ongoing || game.just_finished);
-
-      if (secondGameOngoingOrJustFinished) {
-        const gameInfo = {
-          playerId,
-          team1: secondGameOngoingOrJustFinished.teams[0],
-          team2: secondGameOngoingOrJustFinished.teams[1],
-          map: secondGameOngoingOrJustFinished.map,
-          started_at: secondGameOngoingOrJustFinished.started_at
-        };
-        return gameInfo;
-      }
-    }
-    return null;
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-};
 
 /**
  * Calculates the time elapsed since a specific starting time.
@@ -571,42 +604,42 @@ const offlinePlayer = () => {
  * @param {Array} teamToTrack - An array containing the members to track.
  * @returns {void}
  */
-if (!queryParamPlayerId) {
-  const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
+// if (!queryParamPlayerId) {
+//   const gameInfoPromises = teamToTrack.map((member) => getPlayerGameInfo(member.id));
 
-  Promise.all(gameInfoPromises)
-    .then((gameInfos) => {
-      const hasGameInfo = gameInfos.some((info) => info !== null);
-      if (hasGameInfo) {
-        gameInfos.forEach((gameInfo) => {
-          if (gameInfo) {
-            renderGameInfo(gameInfo);
-          } else {
-            noGames();
-          }
-        });
-      } else {
-        noGames();
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      noGames();
-    });
-} else {
-  getPlayerGameInfo(queryParamPlayerId)
-    .then((gameInfo) => {
-      if (gameInfo) {
-        renderGameInfo(gameInfo);
-      } else {
-        offlinePlayer();
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      offlinePlayer();
-    })
-}
+//   Promise.all(gameInfoPromises)
+//     .then((gameInfos) => {
+//       const hasGameInfo = gameInfos.some((info) => info !== null);
+//       if (hasGameInfo) {
+//         gameInfos.forEach((gameInfo) => {
+//           if (gameInfo) {
+//             renderGameInfo(gameInfo);
+//           } else {
+//             noGames();
+//           }
+//         });
+//       } else {
+//         noGames();
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       noGames();
+//     });
+// } else {
+//   getPlayerGameInfo(queryParamPlayerId)
+//     .then((gameInfo) => {
+//       if (gameInfo) {
+//         renderGameInfo(gameInfo);
+//       } else {
+//         offlinePlayer();
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       offlinePlayer();
+//     })
+// }
 
 /**
  * Checks the stored version of the app against the current version. If the stored version is null or different from the current version,
