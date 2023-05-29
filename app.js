@@ -34,7 +34,6 @@ const overlay = document.querySelector('.overlay');
  */
 const teamList = document.querySelector('.team-list');
 
-
 /**
  * Finds the first <li> element within the team list.
  *
@@ -79,6 +78,8 @@ const queryParams = new URLSearchParams(window.location.search);
  * @type {string | null}
  */
 const queryParamPlayerId = queryParams.get('id');
+
+const redirectBtn = document.querySelector('.redirect-button');
 
 /**
  * Represents the stored version retrieved from local storage.
@@ -167,6 +168,8 @@ if (!queryParamPlayerId) {
     .catch(error => {
       console.log('Error:', error);
     });
+
+    redirectBtn.style.display = 'none'
 }
 
 
