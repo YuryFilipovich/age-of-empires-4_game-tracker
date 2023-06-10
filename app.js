@@ -557,16 +557,17 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
   };
 
   const updateGameInfo = (map, started_at, team1, team2) => {
+    const gameInfoDiv = document.querySelector('.game-info');
+
     const formattedDate = formatDate(started_at);
     const formattedTime = formatTime(started_at);
-    const timeSinceStarted = getTimeSinceStarted(started_at);
+    const initialTimeSinceStarted = getTimeSinceStarted(started_at);
 
-    const gameInfoDiv = document.querySelector('.game-info');
     gameInfoDiv.innerHTML = `
       <div class='map-info'>
         <h3>Map: ${map}</h3>
         <h3>Started at: ${formattedDate} - ${formattedTime}</h3>
-        <h3>Time since started: ${timeSinceStarted}</h3>
+        <h3 class='time-since-started'>Time since started: ${initialTimeSinceStarted}</h3>
       </div>
       <div>
         ${createTeamDiv(team1, 'Team 1')}
@@ -575,6 +576,15 @@ const renderGameInfo = async ({ playerId, team1, team2, map, started_at }) => {
         ${createTeamDiv(team2, 'Team 2')}
       </div>
     `;
+
+    const timeSinceStartedH3 = gameInfoDiv.querySelector('.time-since-started');
+
+    const updateElapsedTime = () => {
+      const timeSinceStarted = getTimeSinceStarted(started_at);
+      timeSinceStartedH3.textContent = `Time since started: ${timeSinceStarted}`;
+    };
+
+    setInterval(updateElapsedTime, 1000);
   };
 
   updateGameInfo(map, started_at, team1, team2);
